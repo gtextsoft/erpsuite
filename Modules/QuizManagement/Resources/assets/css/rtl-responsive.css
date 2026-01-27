@@ -1,0 +1,130 @@
+@media screen and (max-width: 1199px) {
+    /* quiz-management section css start */
+    .quiz-management-inner{
+        padding: 20px 15px 58%;
+    }
+    /* quiz-management section css end */
+
+    }
+    @media screen and (max-width: 991px) {
+        .pt {
+            padding-top: 40px;
+        }
+
+        .pb {
+            padding-bottom: 40px;
+        }
+        /* header css start */
+        .main-navigationbar{
+            padding: 12px;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+    }
+        .site-header .logo-col {
+            max-width: 115px;
+        }
+        .menu-item-right .dropdown-toggle{
+            padding: 8px 10px 8px 40px;
+            font-size: 12px;
+        }
+         /* header css end */
+        /* quiz-management section css start */
+        .quiz-management-sec .quiz-management-row{
+           margin: 0 -10px;
+           row-gap: 20px;
+        }
+        .quiz-management-sec .quiz-management-row .col-12{
+           padding: 0 10px;
+         }
+        /* quiz-management section css end */
+        .quiz-complete-popup .modal-body .quiz-complete-inner{
+            padding: 30px 15px 20px;
+        }
+        .quiz-complete-popup .modal-footer{
+            padding-bottom: 30px;
+        }
+        }
+        @media screen and (max-width: 767px) {
+            /*  quiz-question-popup css start */
+            .quiz-question-popup #quiz-form {
+                margin-top: 30px;
+            }
+            .quiz-question-popup .quiz-option-list{
+                margin-bottom: 25px;
+            }
+            .quiz-question-popup .option,
+            .quiz-question-popup .timer{
+                font-size: 14px;
+            }
+            .quiz-question-popup .quiz-total-question{
+                font-size: 16px;
+            }
+            .quiz-question-popup .option::before{
+                width: 30px;
+                height: 30px;
+            }
+            .quiz-question-popup .incorrect-icon,
+            .quiz-question-popup .correct-icon {
+                width: 17px;
+                height: 17px;
+            }
+            .quiz-question-popup .incorrect-icon svg, .quiz-question-popup .correct-icon svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            /*  quiz-question-popup css end */
+        }
+        @media screen and (max-width: 575px) {
+            /* footer-css start */
+            .site-footer .footer-content p {
+                font-size: 14px;
+            }
+            .site-footer .footer-row{
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+            }
+            .site-footer{
+                padding: 20px 0;
+            }
+            /* footer-css end */
+            /* modal css start */
+            .modal-common-btn{
+                padding: 10px 15px;
+                min-width: 130px;
+            }
+            .quiz-question-popup .option{
+                max-width: 100%;
+            }
+            /* modal css end */
+            /*  quiz-question-popup css start */
+            .quiz-question-popup .modal-header {
+                gap: 10px 13px;
+            }
+            .quiz-question-popup .timer svg {
+                width: 16px;
+                height: 16px;
+            }
+            .quiz-question-popup .quiz-question-wrap .quiz-question-text{
+                padding: 35px 15px 20px;
+            }
+            .quiz-question-popup .quiz-question-wrap .quiz-question-text span{
+                font-size: 16px;
+            }
+            .quiz-question-popup .quiz-lable{
+                margin-bottom: -20px;
+                font-size: 14px;
+            }
+            .quiz-question-popup .quiz-question-wrap{
+                margin-bottom: 20px;
+            }
+            .quiz-question-popup #quiz-form {
+                margin-top: 25px;
+            }
+            /*  quiz-question-popup css end */
+        }

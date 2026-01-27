@@ -1,0 +1,27 @@
+{
+    "name": "Modules/aidocument",
+    "description": "Description for aidocument package",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "orhanerday/open-ai": "4.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\AIDocument\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Modules",
+            "email": "support@Modules.io"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\AIDocument\\Providers\\AIDocumentServiceProvider"
+            ]
+        }
+    }
+}

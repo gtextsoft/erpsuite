@@ -1,0 +1,27 @@
+{
+    "name": "Modules/aiassistant",
+    "description": "Description for aiassistant package",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "orhanerday/open-ai": "4.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\AIAssistant\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Modules",
+            "email": "support@Modules.io"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\AIAssistant\\Providers\\AIAssistantServiceProvider"
+            ]
+        }
+    }
+}

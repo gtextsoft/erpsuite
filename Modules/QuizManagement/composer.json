@@ -1,0 +1,25 @@
+{
+    "name": "Modules/quiz-management",
+    "description": "Description for quiz-management package",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Modules\\QuizManagement\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Modules",
+            "email": "support@Modules.io"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\QuizManagement\\Providers\\QuizManagementServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "name": "workdo/zoom-meeting",
+    "description": "Description for zoom-meeting package",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Modules\\ZoomMeeting\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "WorkDo",
+            "email": "support@workdo.io"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\ZoomMeeting\\Providers\\ZoomMeetingServiceProvider",
+                "Modules\\ZoomMeeting\\Providers\\ViewComposer"
+            ]
+        }
+    }
+}

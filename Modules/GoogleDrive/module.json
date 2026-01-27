@@ -1,0 +1,10 @@
+{
+    "name": "GoogleDrive",
+    "alias": "Google Drive",
+    "description": "",
+    "priority": 0,
+    "version": 3.5,
+    "monthly_price": 0,
+    "yearly_price": 0,
+    "package_name": "google-drive"
+}

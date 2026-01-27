@@ -1,0 +1,12 @@
+{
+    "name": "ZohoBooks",
+    "alias": "zohobooks",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "version":1.0,
+    "providers": [
+        "Modules\\ZohoBooks\\Providers\\ZohoBooksServiceProvider"
+    ],
+    "files": []
+}

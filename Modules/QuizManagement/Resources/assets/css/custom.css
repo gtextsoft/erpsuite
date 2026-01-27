@@ -1,0 +1,46 @@
+.table.modal-table td,
+.table.modal-table th {
+    white-space: normal;
+}
+
+.status-btn{
+    min-width: 80px;
+}
+.invoice-btn{
+    min-width: 94px;
+}
+
+.h-37{
+    max-height: 375px;
+}
+
+
+/* Quiz-Card-Colors Css */
+.theme-color {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.theme-option {
+    position: relative;
+    display: inline-block;
+}
+
+.themes-color-change {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.theme-option input {
+    display: none;
+}
+
+.active_color {
+    border: 3px solid black;
+}

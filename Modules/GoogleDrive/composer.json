@@ -1,0 +1,27 @@
+{
+    "name": "workdo/google-drive",
+    "description": "Description for google-drive package",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "google/apiclient": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\GoogleDrive\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "WorkDo",
+            "email": "support@workdo.io"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\GoogleDrive\\Providers\\GoogleDriveServiceProvider"
+            ]
+        }
+    }
+}
