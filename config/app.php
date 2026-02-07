@@ -190,8 +190,7 @@ return [
         Barryvdh\Debugbar\ServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
         
-        // REMOVED - munafio/chatify not installed (no Laravel 12 compatible version)
-        // \Chatify\ChatifyServiceProvider::class,
+        \Chatify\ChatifyServiceProvider::class,
         
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         
@@ -229,7 +228,7 @@ return [
         'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
         
         // REMOVED - munafio/chatify not installed
-        // 'Chatify' => Chatify\Facades\ChatifyMessenger::class,
+        'Chatify' => Chatify\Facades\ChatifyMessenger::class,
         
         'Menu'      => Lavary\Menu\Facade::class,
         

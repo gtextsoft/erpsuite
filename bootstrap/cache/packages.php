@@ -128,6 +128,17 @@
       0 => 'Livewire\\LivewireServiceProvider',
     ),
   ),
+  'munafio/chatify' => 
+  array (
+    'aliases' => 
+    array (
+      'Chatify' => 'Chatify\\Facades\\ChatifyMessenger',
+    ),
+    'providers' => 
+    array (
+      0 => 'Chatify\\ChatifyServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 
@@ -199,6 +210,17 @@
     'providers' => 
     array (
       0 => 'PragmaRX\\Google2FALaravel\\ServiceProvider',
+    ),
+  ),
+  'santigarcor/laratrust' => 
+  array (
+    'aliases' => 
+    array (
+      'Laratrust' => 'Laratrust\\LaratrustFacade',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laratrust\\LaratrustServiceProvider',
     ),
   ),
   'srmklive/paypal' => 

@@ -65,7 +65,7 @@ class AuthenticatedSessionController extends Controller
                 }
             }
         }
-        $this->validate($request, $validation);
+       $request->validate($validation);
 
         $request->authenticate();
 
