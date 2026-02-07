@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-
-class Controller extends BaseController
+/**
+ * Base controller class.
+ * 
+ * In Laravel 12, the base controller is a minimal abstract class.
+ * Authorization and validation are handled via middleware and form requests.
+ */
+abstract class Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    //
 }

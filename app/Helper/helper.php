@@ -17,6 +17,9 @@ use App\Models\WorkSpace;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Nwidart\Modules\Facades\Module;
@@ -96,7 +99,6 @@ if (!function_exists('generateMenu')) {
                   </li>';
 
             $html .= generateSubMenu($menuItems, $parent);
-
         }
 
         return $html;
@@ -269,7 +271,7 @@ if (!function_exists('getAdminAllSetting')) {
         return Cache::rememberForever('admin_settings', function () {
             $super_admin = User::where('type', 'super admin')->first();
             $settings = [];
-            
+
             if ($super_admin) {
                 // First try the active workspace
                 $active_ws = $super_admin->active_workspace;
@@ -279,7 +281,7 @@ if (!function_exists('getAdminAllSetting')) {
                         ->pluck('value', 'key')
                         ->toArray();
                 }
-                
+
                 // If no settings found or active_workspace is null, fallback to workspace 0
                 if (empty($settings)) {
                     $settings = Setting::where('created_by', $super_admin->id)
@@ -287,7 +289,7 @@ if (!function_exists('getAdminAllSetting')) {
                         ->pluck('value', 'key')
                         ->toArray();
                 }
-                
+
                 // Final fallback: get ANY settings for super admin regardless of workspace
                 if (empty($settings)) {
                     $settings = Setting::where('created_by', $super_admin->id)
@@ -295,12 +297,12 @@ if (!function_exists('getAdminAllSetting')) {
                         ->toArray();
                 }
             }
-            
+
             // Ensure we at least have local storage as default
             if (empty($settings['storage_setting'])) {
                 $settings['storage_setting'] = 'local';
             }
-            
+
             return $settings;
         });
     }
@@ -367,7 +369,7 @@ if (!function_exists('AdminSettingCacheForget')) {
         try {
             Cache::forget('admin_settings');
         } catch (\Exception $e) {
-            \Log::error('AdminSettingCacheForget :' . $e->getMessage());
+            Log::error('AdminSettingCacheForget :' . $e->getMessage());
         }
     }
 }
@@ -385,7 +387,7 @@ if (!function_exists('comapnySettingCacheForget')) {
             $key = 'company_settings_' . $workspace . '_' . $user_id;
             Cache::forget($key);
         } catch (\Exception $e) {
-            \Log::error('comapnySettingCacheForget :' . $e->getMessage());
+            Log::error('comapnySettingCacheForget :' . $e->getMessage());
         }
     }
 }
@@ -410,14 +412,14 @@ if (!function_exists('sideMenuCacheForget')) {
                     $key = 'sidebar_menu_' . $id;
                     Cache::forget($key);
                 } catch (\Exception $e) {
-                    \Log::error('comapnySettingCacheForget :' . $e->getMessage());
+                    Log::error('comapnySettingCacheForget :' . $e->getMessage());
                 }
             }
             try {
                 $key = 'sidebar_menu_' . $user->id;
                 Cache::forget($key);
             } catch (\Exception $e) {
-                \Log::error('comapnySettingCacheForget :' . $e->getMessage());
+                Log::error('comapnySettingCacheForget :' . $e->getMessage());
             }
             return true;
         }
@@ -426,7 +428,7 @@ if (!function_exists('sideMenuCacheForget')) {
             $key = 'sidebar_menu_' . $user->id;
             Cache::forget($key);
         } catch (\Exception $e) {
-            \Log::error('comapnySettingCacheForget :' . $e->getMessage());
+            Log::error('comapnySettingCacheForget :' . $e->getMessage());
         }
 
         return true;
@@ -582,7 +584,7 @@ if (!function_exists('ActivatedModule')) {
         }
         if (!empty($user)) {
             $available_modules = array_keys(Module::getByStatus(1));
-
+            static $active_module = null;
             if ($user->type == 'super admin') {
                 $user_active_module = $available_modules;
             } else {
@@ -590,13 +592,12 @@ if (!function_exists('ActivatedModule')) {
                     $user_not_com = User::find($user->created_by);
                     if (!empty($user)) {
                         // Sidebar Performance Changes
-                        static $active_module = null;
+
                         if ($active_module == null) {
                             $active_module = userActiveModule::where('user_id', $user_not_com->id)->pluck('module')->toArray();
                         }
                     }
                 } else {
-                    static $active_module = null;
                     if ($active_module == null) {
                         $active_module = userActiveModule::where('user_id', $user->id)->pluck('module')->toArray();
                     }
@@ -978,10 +979,10 @@ if (!function_exists('check_file')) {
     {
         if (!empty($path)) {
             $storage_settings = getAdminAllSetting();
-            
+
             // Safe access with fallback
             $storage_setting = $storage_settings['storage_setting'] ?? 'local';
-            
+
             if ($storage_setting == null || $storage_setting == 'local') {
                 // For local storage, try multiple possible paths
                 $possiblePaths = [
@@ -989,7 +990,7 @@ if (!function_exists('check_file')) {
                     base_path($path),
                     storage_path('app/public/' . ltrim($path, 'uploads/'))
                 ];
-                
+
                 foreach ($possiblePaths as $checkPath) {
                     if (file_exists($checkPath)) {
                         return true;
@@ -1018,10 +1019,10 @@ if (!function_exists('check_file')) {
                             'filesystems.disks.wasabi.endpoint' => $storage_settings['wasabi_url'] ?? null,
                         ]);
                     }
-                    
+
                     return Storage::disk($storage_setting)->exists($path);
                 } catch (\Throwable $th) {
-                    \Log::error('Storage check failed: ' . $th->getMessage());
+                    Log::error('Storage check failed: ' . $th->getMessage());
                     // Fallback to local check if cloud storage fails
                     return file_exists(public_path(str_replace('uploads/', '', $path)));
                 }
@@ -1122,19 +1123,20 @@ if (!function_exists('delete_file')) {
                                 'filesystems.disks.s3.endpoint' => $storage_settings['s3_endpoint'],
                             ]
                         );
-                    } else if ($storage_settings['storage_setting'] == 'wasabi') {{
-                        config(
-                            [
-                                'filesystems.disks.wasabi.key' => $storage_settings['wasabi_key'],
-                                'filesystems.disks.wasabi.secret' => $storage_settings['wasabi_secret'],
-                                'filesystems.disks.wasabi.region' => $storage_settings['wasabi_region'],
-                                'filesystems.disks.wasabi.bucket' => $storage_settings['wasabi_bucket'],
-                                'filesystems.disks.wasabi.root' => $storage_settings['wasabi_root'],
-                                'filesystems.disks.wasabi.endpoint' => $storage_settings['wasabi_url'],
-                            ]
-                        );
+                    } else if ($storage_settings['storage_setting'] == 'wasabi') { {
+                            config(
+                                [
+                                    'filesystems.disks.wasabi.key' => $storage_settings['wasabi_key'],
+                                    'filesystems.disks.wasabi.secret' => $storage_settings['wasabi_secret'],
+                                    'filesystems.disks.wasabi.region' => $storage_settings['wasabi_region'],
+                                    'filesystems.disks.wasabi.bucket' => $storage_settings['wasabi_bucket'],
+                                    'filesystems.disks.wasabi.root' => $storage_settings['wasabi_root'],
+                                    'filesystems.disks.wasabi.endpoint' => $storage_settings['wasabi_url'],
+                                ]
+                            );
+                        }
+                        return Storage::disk($storage_settings['storage_setting'])->delete($path);
                     }
-                        return Storage::disk($storage_settings['storage_setting'])->delete($path);}
                 }
             }
         }
@@ -1166,7 +1168,7 @@ if (!function_exists('delete_folder')) {
 
             if ($storage_settings['storage_setting'] == 'local') {
                 if (is_dir(Storage::path($path))) {
-                    return \File::deleteDirectory(Storage::path($path));
+                    return File::deleteDirectory(Storage::path($path));
                 }
             } else {
                 if ($storage_settings['storage_setting'] == 's3') {
@@ -1241,8 +1243,8 @@ if (!function_exists('SubscriptionDetails')) {
         $data['status'] = false;
         if ($user_id != null) {
             $user = User::find($user_id);
-        } elseif (\Auth::check()) {
-            $user = \Auth::user();
+        } elseif (Auth::check()) {
+            $user = Auth::user();
         }
 
         if (isset($user) && !empty($user)) {
@@ -1276,14 +1278,13 @@ if (!function_exists('PlanCheck')) {
                 $id = $user->id;
             } else {
                 $user = User::where('id', $user->created_by)->first();
-                if(!$user)
-                {
+                if (!$user) {
                     return "No User";
                 }
                 $id = $user->id;
             }
         } else {
-            $user = \Auth::user();
+            $user = Auth::user();
             if ($user->type == 'company') {
                 $id = $user->id;
             } else {
@@ -1353,7 +1354,7 @@ if (!function_exists('UserCoupon')) {
             if ($user_id) {
                 $user = User::find($user_id);
             } else {
-                $user = \Auth::user();
+                $user = Auth::user();
             }
             if (!empty($coupons)) {
                 $userCoupon = new UserCoupon();
@@ -1379,7 +1380,7 @@ if (!function_exists('DirectAssignPlan')) {
         $orderID = strtoupper(str_replace('.', '', uniqid('', true)));
         $plan = Plan::find($plan_id);
         if (empty($user_id)) {
-            $user_id = \Auth::user()->id;
+            $user_id = Auth::user()->id;
         }
         $user = User::find($user_id);
         $assignPlan = $user->assignPlan($plan->id, $duration, $user_module, $counter, $user_id);
@@ -1436,7 +1437,7 @@ if (!function_exists('error_res')) {
     {
         $msg = $msg == "" ? "error" : $msg;
         $msg_id = 'error.' . $msg;
-        $converted = \Lang::get($msg_id, $args);
+        $converted = Lang::get($msg_id, $args);
         $msg = $msg_id == $converted ? $msg : $converted;
         $json = array(
             'flag' => 0,
@@ -1483,7 +1484,7 @@ if (!function_exists('CacheSize')) {
     {
         //start for cache clear
         $file_size = 0;
-        foreach (\File::allFiles(storage_path('/framework')) as $file) {
+        foreach (File::allFiles(storage_path('/framework')) as $file) {
             $file_size += $file->getSize();
         }
         $file_size = number_format($file_size / 1000000, 4);
@@ -1504,7 +1505,7 @@ if (!function_exists('sidebar_logo')) {
     function sidebar_logo()
     {
         $admin_settings = getAdminAllSetting();
-        if (\Auth::check() && (\Auth::user()->type != 'super admin')) {
+        if (Auth::check() && (Auth::user()->type != 'super admin')) {
             $company_settings = getCompanyAllSetting();
 
             if ((isset($company_settings['cust_darklayout']) ? $company_settings['cust_darklayout'] : 'off') == 'on') {
@@ -1573,7 +1574,7 @@ if (!function_exists('sidebar_logo')) {
 if (!function_exists('light_logo')) {
     function light_logo()
     {
-        if (\Auth::check()) {
+        if (Auth::check()) {
             $company_settings = getCompanyAllSetting();
             $logo_light = isset($company_settings['logo_light']) ? $company_settings['logo_light'] : 'uploads/logo/logo_light.png';
         } else {
@@ -1591,7 +1592,7 @@ if (!function_exists('light_logo')) {
 if (!function_exists('dark_logo')) {
     function dark_logo()
     {
-        if (\Auth::check()) {
+        if (Auth::check()) {
             $company_settings = getCompanyAllSetting();
             $logo_dark = isset($company_settings['logo_dark']) ? $company_settings['logo_dark'] : 'uploads/logo/logo_dark.png';
         } else {
@@ -1657,7 +1658,7 @@ if (!function_exists('currency_format_with_sym')) {
 
         return (
             ($symbol_position == "pre") ? $currancy_symbol : '') . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '')
-        . number_format($price, $format, $decimal_separator, $thousand_separator) . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '') .
+            . number_format($price, $format, $decimal_separator, $thousand_separator) . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '') .
             (($symbol_position == "post") ? $currancy_symbol : '');
     }
 }
@@ -1719,7 +1720,7 @@ if (!function_exists('super_currency_format_with_sym')) {
         }
         return (
             ($symbol_position == "pre") ? $symbol : '') . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '')
-        . number_format($price, $format, $decimal_separator, $thousand_separator) . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '') .
+            . number_format($price, $format, $decimal_separator, $thousand_separator) . ((isset($currency_space) && $currency_space) == 'withspace' ? ' ' : '') .
             (($symbol_position == "post") ? $symbol : '');
     }
 }

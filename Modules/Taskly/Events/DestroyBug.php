@@ -4,7 +4,7 @@ namespace Modules\Taskly\Events;
 
 use Illuminate\Queue\SerializesModels;
 
-class Destroybug
+class DestroyBug
 {
     use SerializesModels;
 

@@ -161,7 +161,7 @@ return [
          * Package Service Providers...
          */
          
-         Yajra\DataTables\DatatablesServiceProvider::class,
+        Yajra\DataTables\DatatablesServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -183,13 +183,24 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
+        
+        // REMOVED - Not compatible with Laravel 12
+        // Collective\Html\HtmlServiceProvider::class,
+        
         Barryvdh\Debugbar\ServiceProvider::class,
         App\Providers\MenuServiceProvider::class,
-        \Chatify\ChatifyServiceProvider::class,
+        
+        // REMOVED - munafio/chatify not installed (no Laravel 12 compatible version)
+        // \Chatify\ChatifyServiceProvider::class,
+        
         Lab404\Impersonate\ImpersonateServiceProvider::class,
-        Milon\Barcode\BarcodeServiceProvider::class,
-        RachidLaasri\LaravelInstaller\Providers\LaravelInstallerServiceProvider::class,
+        
+        // REMOVED - milon/barcode not installed (not compatible with Laravel 12)
+        // Milon\Barcode\BarcodeServiceProvider::class,
+        
+        // REMOVED - rachidlaasri/laravel-installer not in composer.json
+        // RachidLaasri\LaravelInstaller\Providers\LaravelInstallerServiceProvider::class,
+        
         Srmklive\PayPal\Providers\PayPalServiceProvider::class,
         Paytabscom\Laravel_paytabs\PaypageServiceProvider::class,
         PragmaRX\Google2FALaravel\ServiceProvider::class,
@@ -209,14 +220,23 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-         'Datatables' => Yajra\Datatables\DatatablesServiceProvider::class,
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
+        'Datatables' => Yajra\Datatables\DatatablesServiceProvider::class,
+        
+        // REMOVED - laravelcollective/html not compatible with Laravel 12
+        // 'Form' => Collective\Html\FormFacade::class,
+        // 'Html' => Collective\Html\HtmlFacade::class,
+        
         'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
-        'Chatify' => Chatify\Facades\ChatifyMessenger::class,
+        
+        // REMOVED - munafio/chatify not installed
+        // 'Chatify' => Chatify\Facades\ChatifyMessenger::class,
+        
         'Menu'      => Lavary\Menu\Facade::class,
-        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
-		'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
+        
+        // REMOVED - milon/barcode not installed
+        // 'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        // 'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
+        
         'Google2FA' => PragmaRX\Google2FALaravel\Facade::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class
     ])->toArray(),

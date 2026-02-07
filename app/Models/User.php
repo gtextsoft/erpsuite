@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\UserType;
 use App\Events\DefaultData;
 use App\Events\GivePermissionToRole;
 use Carbon\Carbon;
@@ -88,6 +89,10 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail, JW
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'plan_expire_date' => 'date',
+        'trial_expire_date' => 'date',
+        'active_status' => 'boolean',
+        'dark_mode' => 'boolean',
     ];
 
     public static $superadmin_activated_module = [
