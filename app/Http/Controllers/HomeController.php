@@ -44,6 +44,7 @@ class HomeController extends Controller
     {
         if (Auth::check()) {
             if (Auth::user()->type == 'super admin') {
+                
                 $user = Auth::user();
                 $user['total_user'] = $user->countCompany();
                 $user['total_paid_user'] = $user->countPaidCompany();
@@ -66,7 +67,8 @@ class HomeController extends Controller
                 $user = auth()->user();
 
                 $menu = new \App\Classes\Menu($user);
-                event(new \App\Events\CompanyMenuEvent($menu));
+                $menuService = app(\App\Services\CompanyMenuService::class);
+                $menuService->buildMenu($menu);
                 $menu_items = $menu->menu;
                 $dashboardItem = collect($menu_items)->first(function ($item) {
                     return $item['parent'] === 'dashboard';

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Services;
 
-use App\Events\CompanyMenuEvent;
+use App\Classes\Menu;
 
-class CompanyMenuListener
+class CompanyMenuService
 {
     /**
-     * Handle the event.
+     * Build the company menu.
      */
-    public function handle(CompanyMenuEvent $event): void
+    public function buildMenu(Menu $menu): void
     {
         $module = 'Base';
-        $menu = $event->menu;
+        
         $menu->add([
             'category' => __('General'),
             'title' => __('Dashboard'),
@@ -26,6 +26,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => '',
         ]);
+        
         $menu->add([
             'category' => __('General'),
             'title' => __('User Management'),
@@ -39,6 +40,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'user manage',
         ]);
+        
         $menu->add([
             'category' => __('General'),
             'title' => __('User'),
@@ -52,6 +54,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'user manage',
         ]);
+        
         $menu->add([
             'category' => __('General'),
             'title' => __('Role'),
@@ -65,6 +68,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'roles manage',
         ]);
+        
         $menu->add([
             'category' => __('Finance'),
             'title' => __('Proposal'),
@@ -78,6 +82,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'proposal manage',
         ]);
+        
         $menu->add([
             'category' => __('Finance'),
             'title' => __('Invoice'),
@@ -105,6 +110,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'purchase manage',
         ]);
+        
         $menu->add([
             'category' => __('Finance'),
             'title' => __('Purchase'),
@@ -203,19 +209,6 @@ class CompanyMenuListener
             'permission' => 'user chat manage',
         ]);
 
-        // $menu->add([
-        //     'category' => __('Settings'),
-        //     'title' => __('Helpdesk'),
-        //     'icon' => 'headphones',
-        //     'name' => 'helpdesk',
-        //     'parent' => null,
-        //     'order' => 1900,
-        //     'ignore_if' => [],
-        //     'depend_on' => [],
-        //     'route' => 'helpdesk.index',
-        //     'module' => $module,
-        //     'permission' => 'helpdesk ticket manage',
-        // ]);
         $menu->add([
             'category' => __('Settings'),
             'title' => __('Settings'),
@@ -229,6 +222,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'setting manage',
         ]);
+        
         $menu->add([
             'category' => __('Settings'),
             'title' => __('System Settings'),
@@ -256,6 +250,7 @@ class CompanyMenuListener
             'module' => $module,
             'permission' => 'plan manage'
         ]);
+        
         $menu->add([
             'category' => __('Settings'),
             'title' => __('Order'),

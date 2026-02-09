@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Services;
 
-use App\Events\SuperAdminMenuEvent;
+use App\Classes\Menu;
 
-class SuperAdminMenuListener
+class SuperAdminMenuService
 {
     /**
-     * Handle the event.
+     * Build the super admin menu.
      */
-    public function handle(SuperAdminMenuEvent $event): void
+    public function buildMenu(Menu $menu): void
     {
         $module = 'Base';
-        $menu = $event->menu;
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Dashboard'),
@@ -26,6 +26,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => ''
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Customers'),
@@ -39,6 +40,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'user manage'
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Subscription'),
@@ -52,6 +54,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => ''
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Subscription Setting'),
@@ -65,6 +68,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'plan manage'
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Coupon'),
@@ -78,6 +82,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'coupon manage'
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Order'),
@@ -91,6 +96,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'plan orders'
         ]);
+        
         $menu->add([
             'category' => 'General',
             'title' => __('Bank Transfer Request'),
@@ -132,6 +138,7 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'helpdesk manage'
         ]);
+        
         $menu->add([
             'category' => 'Operations',
             'title' => __('Tickets'),
@@ -173,11 +180,12 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'email template manage'
         ]);
+        
         $menu->add([
             'category' => 'Settings',
             'title' => __('Notification Template'),
             'icon' => 'notification',
-            'name' => 'system-setup',
+            'name' => 'notification-template',
             'parent' => null,
             'order' => 170,
             'ignore_if' => [],
@@ -200,29 +208,51 @@ class SuperAdminMenuListener
             'module' => $module,
             'permission' => 'setting manage'
         ]);
-        $category_wise_add_ons = json_decode(file_get_contents("https://dash-demo.workdo.io/cronjob/dash-addon.json"),true);
-        $categories  =  array_map(function($item) {
-            return [
-                "name" => $item["name"],
-                "icon" => $item["icon"]
-            ];
-        }, $category_wise_add_ons);
+        
+        // Add addon manager categories
+        $this->addAddonCategories($menu, $module);
+    }
 
-        foreach ($categories as $key => $category)
-        {
-            $menu->add([
-                'category' => 'Addon Manager',
-                'title' =>  $category['name'],
-                'icon' =>  $category['icon'] ,
-                'name' => '',
-                'parent' => null,
-                'order' => 1100,
-                'ignore_if' => [],
-                'depend_on' => [],
-                'route' => 'module.index',
-                'module' => $module,
-                'permission' => ''
-            ]);
+    /**
+     * Add addon manager categories to the menu.
+     */
+    protected function addAddonCategories(Menu $menu, string $module): void
+    {
+        try {
+            $category_wise_add_ons = json_decode(
+                file_get_contents("https://dash-demo.workdo.io/cronjob/dash-addon.json"),
+                true
+            );
+            
+            if (!is_array($category_wise_add_ons)) {
+                return;
+            }
+            
+            $categories = array_map(function ($item) {
+                return [
+                    "name" => $item["name"] ?? 'Unknown',
+                    "icon" => $item["icon"] ?? 'apps'
+                ];
+            }, $category_wise_add_ons);
+
+            foreach ($categories as $category) {
+                $menu->add([
+                    'category' => 'Addon Manager',
+                    'title' => $category['name'],
+                    'icon' => $category['icon'],
+                    'name' => '',
+                    'parent' => null,
+                    'order' => 1100,
+                    'ignore_if' => [],
+                    'depend_on' => [],
+                    'route' => 'module.index',
+                    'module' => $module,
+                    'permission' => ''
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Silently fail if external service is unavailable
+            \Illuminate\Support\Facades\Log::warning('Failed to fetch addon categories: ' . $e->getMessage());
         }
     }
 }

@@ -27,64 +27,33 @@ use Nwidart\Modules\Facades\Module;
 if (!function_exists('getMenu')) {
     function getMenu()
     {
-        $user = auth()->user();
-        return Cache::rememberForever(
-            'sidebar_menu_' . $user->id,
-            function () use ($user) {
-                $role = $user->roles->first();
-                $menu = new \App\Classes\Menu($user);
-                if ($role->name == 'super admin') {
-                    event(new \App\Events\SuperAdminMenuEvent($menu));
-                } else {
-                    event(new \App\Events\CompanyMenuEvent($menu));
-                }
-                $collection = collect($menu->menu);
-                $grouped = $collection->groupBy('category')->toArray();
+        $user = Auth::user();
+        
+        $role = $user->roles->first();
+        $menu = new \App\Classes\Menu($user);
+        
+        if ($role->name == 'super admin') {
+            $menuService = app(\App\Services\SuperAdminMenuService::class);
+            $menuService->buildMenu($menu);
+        } else {
+            $menuService = app(\App\Services\CompanyMenuService::class);
+            $menuService->buildMenu($menu);
+        }
 
-                $categoryIcon = categoryIcon();
-                uksort($grouped, function ($a, $b) use ($categoryIcon) {
-                    $indexA = array_search($a, array_keys($categoryIcon));
-                    $indexB = array_search($b, array_keys($categoryIcon));
-                    return $indexA <=> $indexB;
-                });
-                return generateMenu($grouped, null);
-            }
-        );
+        $collection = collect($menu->menu);
+        $grouped = $collection->groupBy('category')->toArray();
+
+        $categoryIcon = categoryIcon();
+        uksort($grouped, function ($a, $b) use ($categoryIcon) {
+            $indexA = array_search($a, array_keys($categoryIcon));
+            $indexB = array_search($b, array_keys($categoryIcon));
+            return $indexA <=> $indexB;
+        });
+
+        return generateMenu($grouped, null);
     }
 }
-// if (!function_exists('generateMenu')) {
-// function generateMenu($menuItems, $parent = null)
-// {
-//     $html = '';
 
-//     $html .= '<ul class="dash-navbar">';
-//     $filteredItems = array_filter($menuItems, function ($item) use ($parent) {
-//         return $item['parent'] == $parent;
-//     });
-//     if($parent == 'subscription')
-//     {
-//         // dd($filteredItems);
-//     }
-//     usort($filteredItems, function ($a, $b) {
-//         return $a['order'] - $b['order'];
-//     });
-
-//     foreach ($filteredItems as $item) {
-//         $html .= '<li class="dash-item dash-hasmenu">';
-//         $html .= '<a href="' . (!empty($item['route']) ? route($item['route']) : '#!') . '" class="dash-link">
-//         <span class="dash-micon"><i class="ti ti-' . $item['icon'] . '"></i></span>
-//         <span class="dash-mtext">' . $item['title'] . '</span>';
-
-//         $html .= '<span class="dash-arrow"> <i data-feather="chevron-right"></i> </span> </a> <ul class="dash-submenu">';
-//         $html .= generateMenu($menuItems, $item['name']);
-
-//         $html .= '</ul> </li>';
-//     }
-//     $html .= '</ul>';
-
-//     return $html;
-// }
-// }
 
 if (!function_exists('generateMenu')) {
     function generateMenu($grouped, $parent = null)
